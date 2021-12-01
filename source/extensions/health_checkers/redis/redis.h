@@ -42,6 +42,12 @@ public:
     return request->request_;
   }
 
+  static const NetworkFilters::Common::Redis::RespValue&
+  specHealthCheckRequest(const std::string& key) {
+    static HealthCheckRequest* request = new HealthCheckRequest(key);
+    return request->request_;
+  }
+
 protected:
   envoy::data::core::v3::HealthCheckerType healthCheckerType() const override {
     return envoy::data::core::v3::REDIS;
