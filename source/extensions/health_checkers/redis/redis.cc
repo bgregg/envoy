@@ -153,6 +153,17 @@ RedisHealthChecker::HealthCheckRequest::HealthCheckRequest() {
   request_.asArray().swap(values);
 }
 
+RedisHealthChecker::HealthCheckRequest::HealthCheckRequest(const int deg_min); {
+  std::vector<NetworkFilters::Common::Redis::RespValue> values(2);
+  values[0].type(NetworkFilters::Common::Redis::RespType::BulkString);
+  values[0].asString() = "SPEC";
+  values[1].type(NetworkFilters::Common::Redis::RespType::BulkString);
+  values[1].asString() = deg_min;
+  request_.type(NetworkFilters::Common::Redis::RespType::Array);
+  request_.asArray().swap(values);
+}
+
+
 } // namespace RedisHealthChecker
 } // namespace HealthCheckers
 } // namespace Extensions
