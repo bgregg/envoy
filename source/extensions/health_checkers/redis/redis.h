@@ -105,7 +105,7 @@ private:
     Extensions::NetworkFilters::Common::Redis::RedisCommandStatsSharedPtr redis_command_stats_;
   };
 
-  enum class Type { Ping, Exists };
+  enum class Type { Ping, Exists, Spec };
 
   struct HealthCheckRequest {
     HealthCheckRequest(const std::string& key);
