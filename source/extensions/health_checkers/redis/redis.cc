@@ -96,7 +96,8 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onInterval() {
     current_request_ = client_->makeRequest(pingHealthCheckRequest(), *this);
     break;
   case Type::Spec:
-    current_request_ = client_->makeRequest(specHealthCheckRequest(parent_.key_), *this)
+    current_request_ = client_->makeRequest(specHealthCheckRequest(parent_.key_), *this);
+    break;
   default:
     NOT_REACHED_GCOVR_EXCL_LINE;
   }
@@ -118,6 +119,14 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onResponse(
   case Type::Ping:
     if (value->type() == NetworkFilters::Common::Redis::RespType::SimpleString &&
         value->asString() == "PONG") {
+      handleSuccess();
+    } else {
+      handleFailure(envoy::data::core::v3::ACTIVE);
+    }
+    break;
+  case Type::Spec:
+    if (value->type() == NetworkFilters::Common::Redis::RespType::Integer &&
+        value->asInteger() == 0) {
       handleSuccess();
     } else {
       handleFailure(envoy::data::core::v3::ACTIVE);
