@@ -6,10 +6,20 @@
 #include "envoy/extensions/filters/network/redis_proxy/v3/redis_proxy.pb.validate.h"
 #include "envoy/extensions/health_checkers/redis/v3/redis.pb.h"
 
+#include <iostream>
+
 namespace Envoy {
 namespace Extensions {
 namespace HealthCheckers {
 namespace RedisHealthChecker {
+
+bool isNumber(const std::string& str)
+{
+    for (char const &c : str) {
+        if (std::isdigit(c) == 0) return false;
+    }
+    return true;
+}
 
 RedisHealthChecker::RedisHealthChecker(
     const Upstream::Cluster& cluster, const envoy::config::core::v3::HealthCheck& config,
@@ -24,9 +34,13 @@ RedisHealthChecker::RedisHealthChecker(
           NetworkFilters::RedisProxy::ProtocolOptionsConfigImpl::authUsername(cluster.info(), api)),
       auth_password_(NetworkFilters::RedisProxy::ProtocolOptionsConfigImpl::authPassword(
           cluster.info(), api)) {
-  if (!key_.empty()) {
+  if (!key_.empty() && !isNumber(key_)) {
     type_ = Type::Exists;
-  } else {
+  }
+  else if (!key_.empty() && isNumber(key_)){
+    type_ = Type::Spec;
+  } 
+  else {
     type_ = Type::Ping;
   }
 }
@@ -81,6 +95,8 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onInterval() {
   case Type::Ping:
     current_request_ = client_->makeRequest(pingHealthCheckRequest(), *this);
     break;
+  case Type::Spec:
+    current_request_ = client_->makeRequest(specHealthCheckRequest(parent_.key_), *this)
   default:
     NOT_REACHED_GCOVR_EXCL_LINE;
   }
