@@ -22,6 +22,10 @@ static_resources:
                   prefix: "/service"
                 route:
                   cluster: local_service
+              - match:
+                  prefix: "/health_check"
+                route:
+                  cluster: local_service
           http_filters:
           - name: envoy.filters.http.router
   clusters:
