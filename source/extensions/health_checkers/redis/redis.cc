@@ -126,7 +126,7 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onResponse(
     break;
   case Type::Spec:
     if (value->type() == NetworkFilters::Common::Redis::RespType::Integer &&
-        value->asInteger() == 0) {
+        value->asInteger() < std::stoi(parent_.key_)) {
       handleSuccess();
     } else {
       handleFailure(envoy::data::core::v3::ACTIVE);
