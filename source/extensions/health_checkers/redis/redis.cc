@@ -13,6 +13,14 @@ namespace Extensions {
 namespace HealthCheckers {
 namespace RedisHealthChecker {
 
+bool isNumber(const std::string& str)
+{
+    for (char const &c : str) {
+        if (std::isdigit(c) == 0) return false;
+    }
+    return true;
+}
+
 RedisHealthChecker::RedisHealthChecker(
     const Upstream::Cluster& cluster, const envoy::config::core::v3::HealthCheck& config,
     const envoy::extensions::health_checkers::redis::v3::Redis& redis_config,
@@ -26,12 +34,13 @@ RedisHealthChecker::RedisHealthChecker(
           NetworkFilters::RedisProxy::ProtocolOptionsConfigImpl::authUsername(cluster.info(), api)),
       auth_password_(NetworkFilters::RedisProxy::ProtocolOptionsConfigImpl::authPassword(
           cluster.info(), api)) {
-  if (!key_.empty() && key_ == "disk-usage"){
-    type_ = Type::Spec;
-  } 
-  else if (!key_.empty()) {
+  
+  if (!key_.empty() && !isNumber(key_)) {
     type_ = Type::Exists;
   }
+  else if (!key_.empty() && isNumber(key_)){
+    type_ = Type::Spec;
+  } 
   else {
     type_ = Type::Ping;
   }
