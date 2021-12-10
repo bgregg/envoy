@@ -116,7 +116,7 @@ private:
   struct HealthCheckRequest {
     HealthCheckRequest(const std::string& key);
     HealthCheckRequest();
-    HealthCheckRequest(const int deg_min);
+    HealthCheckRequest(onst std::string& key);
 
     NetworkFilters::Common::Redis::RespValue request_;
   };
