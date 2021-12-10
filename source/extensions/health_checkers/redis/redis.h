@@ -43,8 +43,8 @@ public:
   }
 
   static const NetworkFilters::Common::Redis::RespValue&
-  specHealthCheckRequest(const int deg_min) {
-    static HealthCheckRequest* request = new HealthCheckRequest(deg_min);
+  specHealthCheckRequest(const std::string& key) {
+    static HealthCheckRequest* request = new HealthCheckRequest(key);
     return request->request_;
   }
 
