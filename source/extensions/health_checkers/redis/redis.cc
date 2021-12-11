@@ -166,7 +166,7 @@ RedisHealthChecker::HealthCheckRequest::HealthCheckRequest(const std::string& ke
   std::vector<NetworkFilters::Common::Redis::RespValue> values(2);
   values[0].type(NetworkFilters::Common::Redis::RespType::BulkString);
   if(isNumber(key)){
-    values[0].asString() = "SPEC";
+    values[0].asString() = "GET";
   }
   else {
     values[0].asString() = "EXISTS";
