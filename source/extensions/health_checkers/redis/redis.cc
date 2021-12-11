@@ -40,11 +40,11 @@ RedisHealthChecker::RedisHealthChecker(
           cluster.info(), api)) {
   
   if (!key_.empty() && !isNumber(key_)) {
-    std::cout << "Exists type health check"
+    std::cout << "Exists type health check";
     type_ = Type::Exists;
   }
   else if (!key_.empty() && isNumber(key_)){
-    std::cout << "Spec type health check"
+    std::cout << "Spec type health check";
     type_ = Type::Spec;
   } 
   else {
