@@ -16,12 +16,8 @@ namespace RedisHealthChecker {
 bool isNumber(const std::string& str)
 {
     for (char const &c : str) {
-        if (std::isdigit(c) == 0) {
-          std::cout << str + "is not a number";
-          return false;
-        }
+        if (std::isdigit(c) == 0) return false;
     }
-    std::cout << str + "is a number";
     return true;
 }
 
@@ -40,11 +36,9 @@ RedisHealthChecker::RedisHealthChecker(
           cluster.info(), api)) {
   
   if (!key_.empty() && !isNumber(key_)) {
-    std::cout << "Exists type health check";
     type_ = Type::Exists;
   }
   else if (!key_.empty() && isNumber(key_)){
-    std::cout << "Spec type health check";
     type_ = Type::Spec;
   } 
   else {
@@ -132,8 +126,9 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onResponse(
     }
     break;
   case Type::Spec:
-    cout << value;
-    cout << "Spec is handling the response."
+    cout << "\n" << value << "\n"
+    cout << value->type() << "\n"
+    cout << "Spec is handling the response." << "\n"
     if (value->type() == NetworkFilters::Common::Redis::RespType::Integer &&
         value->asInteger() < std::stoi(parent_.key_)) {
       handleSuccess();
