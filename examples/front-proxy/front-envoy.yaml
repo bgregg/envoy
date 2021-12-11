@@ -138,7 +138,22 @@ static_resources:
             address:
               socket_address:
                 address: service1
-                port_value: 8000
+                port_value: 8000        
+    health_checks:
+      - timeout:
+          seconds: 300
+        interval:
+          seconds: 10
+        unhealthy_threshold: 1
+        healthy_threshold: 1
+        event_log_path: /dev/stdout
+        always_log_health_check_failures: true
+        custom_health_check:
+          name: envoy.health_checkers.redis
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.health_checkers.redis.v3.Redis
+            key: 'foo'
+
   - name: service2
     type: STRICT_DNS
     lb_policy: ROUND_ROBIN
