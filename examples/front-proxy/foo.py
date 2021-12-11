@@ -12,4 +12,4 @@ with open('/code/front-envoy.yaml') as f:
 
 key = '79'
 
-r.set(key, round(percentage * 100, 2))
+r.set(key, int(round(percentage * 100, 0)))
