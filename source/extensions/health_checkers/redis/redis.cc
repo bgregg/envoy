@@ -126,7 +126,7 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onResponse(
     }
     break;
   case Type::Spec:
-    std::cout << "\n" << std::(value->asInteger()) << "\n";
+    std::cout << "\n" << std::stoi(value->asInteger()) << "\n";
     std::cout << "Spec is handling the response." << "\n";
     if (value->type() == NetworkFilters::Common::Redis::RespType::Integer &&
         value->asInteger() < std::stoi(parent_.key_)) {
