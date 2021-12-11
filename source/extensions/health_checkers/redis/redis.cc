@@ -126,8 +126,6 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onResponse(
     }
     break;
   case Type::Spec:
-    std::cout << "Is this a number?" << value->asString() << "  " << isNumber(value->asString()) << "\n";
-    std::cout << "Is the second condition true? " << (value->asInteger() < std::stoi(parent_.key_)) << "\n";
     if (isNumber(value->asString()) &&
         std::stoi(value->asString()) < std::stoi(parent_.key_)) {
       handleSuccess();
