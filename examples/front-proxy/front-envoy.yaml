@@ -3,7 +3,7 @@ static_resources:
   - address:
       socket_address:
         address: 0.0.0.0
-        port_value: 8081
+        port_value: 8080
     filter_chains:
     - filters:
       - name: envoy.filters.network.http_connection_manager
@@ -21,11 +21,11 @@ static_resources:
               - match:
                   prefix: "/service/1"
                 route:
-                  cluster: actualservice1
+                  cluster: service1
               - match:
                   prefix: "/health_check"
                 route: 
-                  cluster: actualservice1
+                  cluster: service1
           http_filters:
           - name: envoy.filters.http.router
 
@@ -41,7 +41,7 @@ static_resources:
             address:
               socket_address:
                 address: service1
-                port_value: 8000   
+                port_value: 8001
     health_checks:
       - timeout:
           seconds: 300
@@ -55,20 +55,8 @@ static_resources:
           name: envoy.health_checkers.redis
           typed_config:
             "@type": type.googleapis.com/envoy.extensions.health_checkers.redis.v3.Redis
-            key: '79'
+            key: '4'
 
-  - name: actualservice1
-    type: STRICT_DNS
-    lb_policy: ROUND_ROBIN
-    load_assignment:
-      cluster_name: actualservice1
-      endpoints:
-      - lb_endpoints:
-        - endpoint:
-            address:
-              socket_address:
-                address: service1
-                port_value: 8001  
 admin:
   address:
     socket_address:

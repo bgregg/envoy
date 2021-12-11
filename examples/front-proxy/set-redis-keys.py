@@ -8,8 +8,6 @@ percentage = stats.used / stats.total
 
 with open('/code/front-envoy.yaml') as f:
     dict = yaml.full_load(f)
-    print(dict)
-
-key = '79'
-
-r.set(key, int(round(percentage * 100, 0)))
+    key = dict["static_resources"]["clusters"][0]["health_checks"][0]["custom_health_check"]["typed_config"]["key"]
+    
+    r.set(key, int(round(percentage * 100, 0)))
