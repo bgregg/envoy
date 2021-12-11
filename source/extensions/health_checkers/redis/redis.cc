@@ -16,8 +16,12 @@ namespace RedisHealthChecker {
 bool isNumber(const std::string& str)
 {
     for (char const &c : str) {
-        if (std::isdigit(c) == 0) return false;
+        if (std::isdigit(c) == 0) {
+          std::cout << str + "is not a number";
+          return false;
+        }
     }
+    std::cout << str + "is a number";
     return true;
 }
 
@@ -34,10 +38,13 @@ RedisHealthChecker::RedisHealthChecker(
           NetworkFilters::RedisProxy::ProtocolOptionsConfigImpl::authUsername(cluster.info(), api)),
       auth_password_(NetworkFilters::RedisProxy::ProtocolOptionsConfigImpl::authPassword(
           cluster.info(), api)) {
+  
   if (!key_.empty() && !isNumber(key_)) {
+    std::cout << "Exists type health check"
     type_ = Type::Exists;
   }
   else if (!key_.empty() && isNumber(key_)){
+    std::cout << "Spec type health check"
     type_ = Type::Spec;
   } 
   else {
@@ -126,7 +133,7 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onResponse(
     break;
   case Type::Spec:
     if (value->type() == NetworkFilters::Common::Redis::RespType::Integer &&
-        value->asInteger() == 0) {
+        value->asInteger() < std::stoi(parent_.key_)) {
       handleSuccess();
     } else {
       handleFailure(envoy::data::core::v3::ACTIVE);
@@ -163,7 +170,8 @@ void RedisHealthChecker::RedisActiveHealthCheckSession::onTimeout() {
 RedisHealthChecker::HealthCheckRequest::HealthCheckRequest(const std::string& key) {
   std::vector<NetworkFilters::Common::Redis::RespValue> values(2);
   values[0].type(NetworkFilters::Common::Redis::RespType::BulkString);
-  values[0].asString() = "EXISTS";
+  if(isNumber(key)){values[0].asString() = "SPEC";}
+  else {values[0].asString() = "EXISTS";}
   values[1].type(NetworkFilters::Common::Redis::RespType::BulkString);
   values[1].asString() = key;
   request_.type(NetworkFilters::Common::Redis::RespType::Array);
@@ -174,16 +182,6 @@ RedisHealthChecker::HealthCheckRequest::HealthCheckRequest() {
   std::vector<NetworkFilters::Common::Redis::RespValue> values(1);
   values[0].type(NetworkFilters::Common::Redis::RespType::BulkString);
   values[0].asString() = "PING";
-  request_.type(NetworkFilters::Common::Redis::RespType::Array);
-  request_.asArray().swap(values);
-}
-
-RedisHealthChecker::HealthCheckRequest::HealthCheckRequest(const int deg_min) {
-  std::vector<NetworkFilters::Common::Redis::RespValue> values(2);
-  values[0].type(NetworkFilters::Common::Redis::RespType::BulkString);
-  values[0].asString() = "SPEC";
-  values[1].type(NetworkFilters::Common::Redis::RespType::BulkString);
-  values[1].asString() = deg_min;
   request_.type(NetworkFilters::Common::Redis::RespType::Array);
   request_.asArray().swap(values);
 }
